@@ -10,7 +10,7 @@
 get_header();
 ?>
 
-	<div id="primary" class="content-area">
+	<div id="press-primary" class="content-area">
         <h1>Press</h1>
 		<main id="press-archive" class="site-main">
 
@@ -42,4 +42,5 @@ get_header();
 		</main><!-- #main -->
 	</div><!-- #primary -->
 
+<?php get_sidebar(); ?>
 <?php get_footer(); ?>

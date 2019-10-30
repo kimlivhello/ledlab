@@ -896,7 +896,7 @@ nav #site-navigation {
 
 .home-page-title {
 	font-family: 'Rokkitt', serif;
-	font-size: 3em;
+	font-size: 2.5em;
 	font-weight: 700;
 	line-height: 1.2em;
 	margin-top: 1em;
@@ -915,24 +915,83 @@ nav #site-navigation {
 
 @media screen and (min-width: 1200px) {
 
-	.home-page-title {
-		margin-bottom: 1em;
+	#front-page-primary {
+		float: right;
+		width: 70%;
+	}
+
+
+	.home-page-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.home-page-image {
-		float: left;
-		margin-top: 0;
-		margin-bottom: 3em;
-		width: 47.5%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
-	.home-page-text {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-		float: right;
-		margin-bottom: 0;
-		width: 47.5%;
+}
+
+/*** JOIN THE LAB AND PARTICIPATE PAGE STYLES ***/
+
+.RA-seeking-status {
+	border: 2px solid #D41B2C;
+	padding: 2em 3em;
+	text-align: center;
+}
+
+
+.nf-form-content button, 
+.nf-form-content input[type=button], 
+.nf-form-content input[type=submit] {
+	background-color: #385775;
+	border: none;
+	color: white;
+	font-size: 1em;
+	height: auto;
+	padding: 1em 1.5em;
+	margin: 1em auto;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.participant-interest {
+	border: 2px solid #D41B2C;
+	padding: 2em 3em;
+	text-align: center;
+}
+
+.interest-button {
+	background-color: #D41B2C;
+	border: none;
+	color: white;
+	font-size: 1em;
+	height: auto;
+	padding: 1em 1.5em;
+	margin: auto;
+	text-align: center;
+	text-decoration: none;
+	width: 50%;
+}
+
+.interest-button a {
+	text-decoration: none;
+	color: white;
+}
+
+.interest-button a:hover {
+	color: #aaa;
+}
+
+@media screen and (min-width: 1200px) {
+	
+	.interest-button {
+		width: 33%;
 	}
 
 }
@@ -940,9 +999,23 @@ nav #site-navigation {
 /*** GENERAL PAGE-STYLES ***/
 
 .entry-content {
-	margin: auto;
+	margin: 1em auto 3em;
 	max-width: 1200px;
 }
+
+@media screen and (min-width: 1200px) {
+
+	#page-primary {
+		float: right;
+		width: 70%;
+	}
+
+	#page img {
+		max-width: 600px;
+	}
+
+}
+
 
 /*** PRESS-PAGE-STYLES ***/
 
@@ -996,6 +1069,11 @@ nav #site-navigation {
 
 @media screen and (min-width: 1200px) {
 	
+	#press-primary {
+		float: right;
+		width: 70%;
+	}
+
 	#press-archive {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
@@ -1048,6 +1126,11 @@ nav #site-navigation {
 
 /*** LAB MEMBER ARCHIVE PAGE STYLES ***/
 
+#lab-members-primary {
+	float: right;
+	width: 70%;
+}
+
 .lab-member {
 	border: 1px solid black;
 	display: flex;
@@ -1098,7 +1181,7 @@ nav #site-navigation {
 	}
 
 	#lab-members-archive {
-		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr;
 		justify-content: center;
 		margin: inherit auto 3em auto;
 		max-width: 1600px;
@@ -1112,6 +1195,51 @@ nav #site-navigation {
 
 }
 
+/*** SIDEBAR STYLES ***/
+
+
+.widget-title {
+	color: #D41B2C;
+	text-align: center;
+	margin-top: 0;
+}
+
+.textwidget p {
+	font-size: .875em;
+}
+
+.email-button {
+	background-color: #385775;
+	border: none;
+	color: white;
+	font-size: 1em;
+	padding: 1em 1.5em;
+	margin: 1em auto;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+@media screen and (min-width: 768px) {
+
+	.widget-title {
+		text-align: left;
+	}
+
+}
+
+@media screen and (min-width: 1200px) {
+
+	.widget-area {
+		border-right: 1px solid #aaa;
+		float: left;
+		margin-top: 4em;
+		max-width: 400px;
+		position: relative;
+		width: 22%;
+	}
+	
+}
 
 /*** CONTACT-PAGE-STYLES ***/
 
@@ -1244,11 +1372,11 @@ p.credit {
 ## Links
 --------------------------------------------------------------*/
 a {
-	color: royalblue;
+	color:#385775;
 }
 
 a:hover, a:focus, a:active {
-	color: #52CFE5;
+	color: #D41B2C;
 }
 
 a:focus {
@@ -1258,6 +1386,7 @@ a:focus {
 a:hover, a:active {
 	outline: 0;
 }
+
 
 /*--------------------------------------------------------------
 ## Menus
