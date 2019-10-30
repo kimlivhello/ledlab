@@ -16,8 +16,8 @@
 	<footer id="colophon" class="site-footer">
 		<div class="site-info">
 			<div class="footer-content">
-				<section class="footer-contact-link">
-					<a href="http://localhost/ledlab/contact">Contact Us</a>
+				<section id="footer-contact-link">
+					<a href="https://cos.northeastern.edu/psychology/">NU Psychology Department</a>
 				</section>
 				<section class="northeastern-logo">
 					<a href="http://northeastern.edu">
@@ -25,8 +25,8 @@
 							alt="Northeastern Wordmark" target="_blank" />
 					</a>
 				</section>
-				<section class="copyright">
-					<p>Copyright LEDlab 2019</p>
+				<section id="copyright">
+					<p>Copyright LEDlab 2019<br><a href="http://kimliv.com" target="_blank">Design by KimLiv</p></a>
 				</section>
 
 			</div><!-- .footer-content -->

@@ -866,9 +866,18 @@ nav #site-navigation {
 }
 
 .northeastern-logo,
-.footer-contact-link,
-.copyright {
+#footer-contact-link,
+#copyright {
 	width: 100%;
+}
+
+#copyright a {
+	font-size: 1em;
+}
+
+#copyright a:hover,
+#footer-contact-link a:hover {
+	color: #aaa;
 }
 
 /*** Tablet Footer Styles  ***/
@@ -936,6 +945,22 @@ nav #site-navigation {
 
 }
 
+/*** GENERAL PAGE-STYLES ***/
+
+.entry-content {
+	margin: 1em auto 3em;
+	max-width: 1200px;
+}
+
+@media screen and (min-width: 1200px) {
+
+	#page-primary {
+		float: right;
+		width: 70%;
+	}
+
+}
+
 /*** JOIN THE LAB AND PARTICIPATE PAGE STYLES ***/
 
 .RA-seeking-status {
@@ -943,7 +968,6 @@ nav #site-navigation {
 	padding: 2em 3em;
 	text-align: center;
 }
-
 
 .nf-form-content button, 
 .nf-form-content input[type=button], 
@@ -996,24 +1020,10 @@ nav #site-navigation {
 
 }
 
-/*** GENERAL PAGE-STYLES ***/
+/*** DIRECTIONS PAGE STYLES ***/
 
-.entry-content {
-	margin: 1em auto 3em;
-	max-width: 1200px;
-}
-
-@media screen and (min-width: 1200px) {
-
-	#page-primary {
-		float: right;
-		width: 70%;
-	}
-
-	#page img {
-		max-width: 600px;
-	}
-
+iframe {
+	margin: auto;
 }
 
 
@@ -1080,6 +1090,26 @@ nav #site-navigation {
 		margin-bottom: 2em;
 	}
 
+}
+
+/*** PUBLICATION PAGE STYLES ***/
+
+#post-24 ul {
+	list-style-type: square;
+	margin-left: 0;
+}
+
+#post-24 li {
+	margin-bottom: .5em;
+}
+
+#post-24 h4 {
+	color: #D41B2C;
+}
+
+#post-24 a {
+	text-decoration: none;
+	font-weight: 400;
 }
 
 /*** LAB MEMBER SINGLE PAGE STYLES ***/
@@ -1373,6 +1403,7 @@ p.credit {
 --------------------------------------------------------------*/
 a {
 	color:#385775;
+	font-weight: 700;
 }
 
 a:hover, a:focus, a:active {
