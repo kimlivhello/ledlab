@@ -74,8 +74,6 @@ if ( ! function_exists( 'ledlab_setup' ) ) :
 		 * @link https://codex.wordpress.org/Theme_Logo
 		 */
 		add_theme_support( 'custom-logo', array(
-			'height'      => 250,
-			'width'       => 250,
 			'flex-width'  => true,
 			'flex-height' => true,
 		) );
@@ -174,6 +172,17 @@ function create_custom_post_types() {
 			'public' => true,
 			'has_archive' => true,
 			'rewrite' => array( 'slug' => 'lab-members' ),
+		)
+	);
+	register_post_type( 'press_articles',
+		array(
+			'labels' => array(
+				'name' => __( 'Press Articles' ),
+				'singular_name' => __( 'Press Article' )
+			),
+			'public' => true,
+			'has_archive' => true,
+			'rewrite' => array ( 'slug' => 'press-articles' ),
 		)
 	);
 }

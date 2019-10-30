@@ -15,17 +15,21 @@
 
 	<footer id="colophon" class="site-footer">
 		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'ledlab' ) ); ?>">
-				<?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'ledlab' ), 'WordPress' );
-				?>
-			</a>
-			<span class="sep"> | </span>
-				<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'ledlab' ), 'ledlab', '<a href="http://underscores.me/">Underscores.me</a>' );
-				?>
+			<div class="footer-content">
+				<section class="footer-contact-link">
+					<a href="http://localhost/ledlab/contact">Contact Us</a>
+				</section>
+				<section class="northeastern-logo">
+					<a href="http://northeastern.edu">
+						<img src="http://localhost/ledlab/wp-content/uploads/2019/10/NUWordMark.png"
+							alt="Northeastern Wordmark" target="_blank" />
+					</a>
+				</section>
+				<section class="copyright">
+					<p>Copyright LEDlab 2019</p>
+				</section>
+
+			</div><!-- .footer-content -->
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
 </div><!-- #page -->
