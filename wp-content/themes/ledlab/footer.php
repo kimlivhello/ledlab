@@ -17,12 +17,12 @@
 		<div class="site-info">
 			<div class="footer-content">
 				<section id="footer-contact-link">
-					<a href="https://cos.northeastern.edu/psychology/">NU Psychology Department</a>
+					<a href="https://cos.northeastern.edu/psychology/" target="_blank">NU Psychology Department</a>
 				</section>
 				<section class="northeastern-logo">
-					<a href="http://northeastern.edu">
+					<a href="http://northeastern.edu" target="_blank">
 						<img src="http://localhost/ledlab/wp-content/uploads/2019/10/NUWordMark.png"
-							alt="Northeastern Wordmark" target="_blank" />
+							alt="Northeastern Wordmark" />
 					</a>
 				</section>
 				<section id="copyright">
