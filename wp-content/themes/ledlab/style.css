@@ -825,6 +825,27 @@ textarea {
 
 /*** JOIN THE LAB AND PARTICIPATE PAGE STYLES ***/
 
+table {
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid #385775;
+	font-size: .875em;
+}
+
+th, td {
+	padding: .5em;
+}
+
+td .table-header {
+	color: #385775;
+}
+
+#post-35 h3 {
+	text-align: center;
+}
+
 .RA-seeking-status {
 	border: 2px solid #D41B2C;
 	padding: 2em 3em;
