@@ -113,7 +113,7 @@
 
 				<hr/>
 					<div>
-						<input type="checkbox" name="consent" onchange="document.getElementById('migratesubmit').disabled = !this.checked;" value="1"/>I agree to WP Engine's <a href="https://wpengine.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+						<input type="checkbox" style="width:16px; height:16px" name="consent" onchange="document.getElementById('migratesubmit').disabled = !this.checked;" value="1"/>I agree to WP Engine's <a href="https://wpengine.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service</a>
 					</div>
 						<br><input type='submit' disabled id='migratesubmit' value='Migrate' class="button button-primary">
 			</form>

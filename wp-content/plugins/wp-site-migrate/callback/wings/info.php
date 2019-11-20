@@ -142,6 +142,8 @@ class BVInfoCallback extends BVCallbackBase {
 			'dbcharset' => defined('DB_CHARSET') ? DB_CHARSET : null,
 			'disallow_file_edit' => defined('DISALLOW_FILE_EDIT'),
 			'disallow_file_mods' => defined('DISALLOW_FILE_MODS'),
+			'custom_users' => defined('CUSTOM_USER_TABLE') ? CUSTOM_USER_TABLE : null,
+			'custom_usermeta' => defined('CUSTOM_USERMETA_TABLE') ? CUSTOM_USERMETA_TABLE : null,
 			'locale' => get_locale(),
 			'wp_local_string' => $wp_local_package,
 			'charset_collate' => $db->getCharsetCollate()
@@ -230,11 +232,19 @@ class BVInfoCallback extends BVCallbackBase {
 		$arules = $settings->getOption('bvfwauditrules');
 		$rmode = $settings->getOption('bvfwrulesmode');
 		$reqprofilingmode = $settings->getOption('bvfwreqprofilingmode');
+		$bypass_level = $settings->getOption('bvfwbypasslevel');
+		$custom_roles = $settings->getOption('bvfwcustomroles');
+		$cookiemode = $settings->getOption('bvfwcookiemode');
+		$cookiekey = (string) $settings->getOption('bvfwcookiekey');
 		$config['mode'] = intval($mode ? $mode : 1);
 		$config['disabled_rules'] = $drules ? $drules : array();
 		$config['audit_rules'] = $arules ? $arules : array();
 		$config['rules_mode'] = intval($rmode ? $rmode : 1);
 		$config['req_profiling_mode'] = intval($reqprofilingmode ? $reqprofilingmode : 1);
+		$config['bypslevl'] = intval($bypass_level ? $bypass_level : 2);
+		$config['cstmrls'] = $custom_roles ? $custom_roles : array();
+		$config['cookiemode'] = intval($cookiemode ? $cookiemode : 2);
+		$config['cookiekey'] = $cookiekey;
 		return $config;
 	}
 

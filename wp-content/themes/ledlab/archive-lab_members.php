@@ -11,7 +11,10 @@ get_header();
 ?>
 
 	<div id="lab-members-primary" class="content-area">
-        <h1>Lab Members</h1>
+        <div class="lab-members-archive-text">
+            <h1>Lab Members</h1>
+            <h3>For more information on a lab member, click their photo or name</h3>
+        </div>
 		<main id="lab-members-archive" class="site-main">
             <?php query_posts('posts_per_page=-1&post_type=lab_members&order=ASC'); ?>
                     <?php while ( have_posts() ) :
@@ -22,7 +25,7 @@ get_header();
                     ?>
                 
                     <article class="lab-member">
-                        <a href="<?php the_permalink(); ?>" target="_blank" ?>
+                        <a href="<?php the_permalink(); ?>" target="_blank" >
                             <figure class="lab-member-image">
                                 <?php if($person_photo) {
                                     echo wp_get_attachment_image($person_photo, "full");
@@ -30,8 +33,10 @@ get_header();
                             </figure>
                         </a>
                         <div class="lab-member-info">
-                            <h2 class="lab-member-name"><?php the_title(); ?></h2>
-                            <h4 class="lab-member-title"><?php echo $person_title; ?></h4>
+                            <a href="<?php the_permalink(); ?>" target="_blank" >
+                                <h2 class="lab-member-name"><?php the_title(); ?></h2>
+                                <h4 class="lab-member-title"><?php echo $person_title; ?></h4>
+                            </a>
                         </div>    
                         
                     </article>

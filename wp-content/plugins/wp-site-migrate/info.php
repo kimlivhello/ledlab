@@ -9,7 +9,7 @@ if (!class_exists('WPEInfo')) :
 		public $badgeinfo = 'wpebadge';
 		public $ip_header_option = 'wpeipheader';
 		public $brand_option = 'wpebrand';
-		public $version = '2.1';
+		public $version = '3.4';
 		public $webpage = 'https://wpengine.com';
 		public $appurl = 'https://wpengine.blogvault.net';
 		public $slug = 'wp-site-migrate/wpengine.php';
@@ -78,7 +78,6 @@ if (!class_exists('WPEInfo')) :
 		public function respInfo() {
 			return array(
 				"bvversion" => $this->version,
-				"asymauth" => "true",
 				"sha1" => "true"
 			);
 		}

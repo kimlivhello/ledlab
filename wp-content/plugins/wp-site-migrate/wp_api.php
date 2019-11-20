@@ -3,14 +3,26 @@
 if (!defined('ABSPATH')) exit;
 if (!class_exists('WPEWPAPI')) :
 	class WPEWPAPI {
-		public $account;
+		public $settings;
 
 		public function __construct($settings) {
-			$this->account = WPEAccount::find($settings);
+			$this->settings = $settings;
 		}
 		
-		public function pingbv($method, $body) {
-			$url = $this->account->authenticatedUrl($method);
+		public function pingbv($method, $body, $public = false) {
+			if ($public) {
+				$this->create_request_params($method, $public);
+			} else {
+				$accounts = WPEAccount::allAccounts($this->settings);
+				foreach ($accounts as $pubkey => $value ) {
+					$this->create_request_params($method, $pubkey);
+				}
+			}
+		}
+
+		public function create_request_params($method, $pubkey) {
+			$account = WPEAccount::find($this->settings, $pubkey);
+			$url = $account->authenticatedUrl($method);
 			$this->http_request($url, $body);
 		}
 

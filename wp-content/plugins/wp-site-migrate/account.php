@@ -7,6 +7,8 @@ if (!class_exists('WPEAccount')) :
 		public $public;
 		public $secret;
 		public $sig_match;
+		public static $api_public_key = 'bvApiPublic';
+		public static $accounts_list = 'bvAccountsList';
 	
 		public function __construct($settings, $public, $secret) {
 			$this->settings = $settings;
@@ -14,17 +16,19 @@ if (!class_exists('WPEAccount')) :
 			$this->secret = $secret;
 		}
 
-		public static function find($settings, $public = false) {
-			if (!$public) {
-				$public = self::defaultPublic($settings);
+		public static function find($settings, $public) {
+			$accounts = self::allAccounts($settings);
+			if (array_key_exists($public, $accounts) && isset($accounts[$public]['secret'])) {
+				$secret = $accounts[$public]['secret'];
 			}
-			$bvkeys = self::allKeys($settings);
-			if ($public && array_key_exists($public, $bvkeys) && isset($bvkeys[$public])) {
-				$secret = $bvkeys[$public];
-			} else {
-				$secret = self::defaultSecret($settings);
+			if (empty($secret) || (strlen($secret) < 32)) {
+				return null;
 			}
 			return new self($settings, $public, $secret);
+		}
+
+		public static function update($settings, $allAccounts) {
+			$settings->updateOption(self::$accounts_list, $allAccounts);
 		}
 
 		public static function randString($length) {
@@ -38,24 +42,53 @@ if (!class_exists('WPEAccount')) :
 			return $str;
 		}
 
-		public static function allAccounts($settings) {
-			return $settings->getOption('bvAccounts');
+		public static function apiPublicAccount($settings) {
+			$pubkey = $settings->getOption(self::$api_public_key);
+			return self::find($settings, $pubkey);
 		}
 
-		public static function hasAccount($settings) {
+		public static function updateApiPublicKey($settings, $pubkey) {
+			$settings->updateOption(self::$api_public_key, $pubkey);
+		}
+
+		public static function getApiPublicKey($settings) {
+			return $settings->getOption(self::$api_public_key);
+		}
+
+		public static function getPlugName($settings) {
+			$bvinfo = new WPEInfo($settings);
+			return $bvinfo->plugname;
+		}
+
+		public static function allAccounts($settings) {
+			$accounts = $settings->getOption(self::$accounts_list);
+			if (!is_array($accounts)) {
+				$accounts = array();
+			}
+			return $accounts;
+		}
+
+		public static function accountsByPlugname($settings) {
 			$accounts = self::allAccounts($settings);
-			return (is_array($accounts) && sizeof($accounts) >= 1);
+			$accountsByPlugname = array();
+			$plugname = self::getPlugName($settings);
+			foreach ($accounts as $pubkey => $value) {
+				if (array_key_exists($plugname, $value) && $value[$plugname] == 1) {
+					$accountsByPlugname[$pubkey] = $value;
+				}
+			}
+			return $accountsByPlugname;
 		}
 
 		public static function isConfigured($settings) {
-			return self::defaultPublic($settings);
+			$accounts = self::accountsByPlugname($settings);
+			return (sizeof($accounts) >= 1);
 		}
 
-		public function setup() {
-			$bvinfo = new WPEInfo($this->settings);
-			$this->settings->updateOption('bvSecretKey', self::randString(32));
-			$this->settings->updateOption($bvinfo->plug_redirect, 'yes');
-			$this->settings->updateOption('bvActivateTime', time());
+		public static function setup($settings) {
+			$bvinfo = new WPEInfo($settings);
+			$settings->updateOption($bvinfo->plug_redirect, 'yes');
+			$settings->updateOption('bvActivateTime', time());
 		}
 
 		public function authenticatedUrl($method) {
@@ -76,50 +109,13 @@ if (!class_exists('WPEAccount')) :
 			return $args;
 		}
 
-		public static function defaultPublic($settings) {
-			return $settings->getOption('bvPublic');
-		}
-
-		public static function defaultSecret($settings) {
-			return $settings->getOption('bvSecretKey');
-		}
-
-		public static function allKeys($settings) {
-			$keys = $settings->getOption('bvkeys');
-			if (!is_array($keys)) {
-				$keys = array();
+		public static function addAccount($settings, $public, $secret) {
+			$accounts = self::allAccounts($settings);
+			if (!isset($public, $accounts)) {
+				$accounts[$public] = array();
 			}
-			$public = self::defaultPublic($settings);
-			$secret = self::defaultSecret($settings);
-			if ($public)
-				$keys[$public] = $secret;
-			$keys['default'] = $secret;
-			return $keys;
-		}
-
-		public function addKeys($public, $secret) {
-			$bvkeys = $this->settings->getOption('bvkeys');
-			if (!$bvkeys || (!is_array($bvkeys))) {
-				$bvkeys = array();
-			}
-			$bvkeys[$public] = $secret;
-			$this->settings->updateOption('bvkeys', $bvkeys);
-		}
-
-		public function updateKeys($publickey, $secretkey) {
-			$this->settings->updateOption('bvPublic', $publickey);
-			$this->settings->updateOption('bvSecretKey', $secretkey);
-			$this->addKeys($publickey, $secretkey);
-		}
-
-		public function rmKeys($publickey) {
-			$bvkeys = $this->settings->getOption('bvkeys');
-			if ($bvkeys && is_array($bvkeys)) {
-				unset($bvkeys[$publickey]);
-				$this->settings->updateOption('bvkeys', $bvkeys);
-				return true;
-			}
-			return false;
+			$accounts[$public]['secret'] = $secret;
+			self::update($settings, $accounts);
 		}
 
 		public function respInfo() {
@@ -129,59 +125,58 @@ if (!class_exists('WPEAccount')) :
 			);
 		}
 
-		public function authenticate() {
-			$method = $_REQUEST['bvMethod'];
-			$time = intval($_REQUEST['bvTime']);
-			$version = $_REQUEST['bvVersion'];
-			$sig = $_REQUEST['sig'];
+		public static function getSigMatch($request, $secret) {
+			$method = $request->method;
+			$time = $request->time;
+			$version = $request->version;
+			if ($request->is_sha1) {
+				$sig_match = sha1($method.$secret.$time.$version);
+			} else {
+				$sig_match = md5($method.$secret.$time.$version);
+			}
+			return $sig_match;
+		}
+
+		public function authenticate($request) {
+			$time = $request->time;
 			if ($time < intval($this->settings->getOption('bvLastRecvTime')) - 300) {
 				return false;
 			}
-			if (array_key_exists('sha1', $_REQUEST)) {
-				$sig_match = sha1($method.$this->secret.$time.$version);
-			} else {
-				$sig_match = md5($method.$this->secret.$time.$version);
-			}
-			$this->sig_match = $sig_match;
-			if ($sig_match !== $sig) {
+			$this->sig_match = self::getSigMatch($request, $this->secret);
+			if ($this->sig_match !== $request->sig) {
 				return $sig_match;
 			}
 			$this->settings->updateOption('bvLastRecvTime', $time);
 			return 1;
 		}
 	
-		public function add($info) {
+		public function updateInfo($info) {
 			$accounts = self::allAccounts($this->settings);
-			if(!is_array($accounts)) {
-				$accounts = array();
-			}
+			$plugname = self::getPlugName($this->settings);
 			$pubkey = $info['pubkey'];
+			if (!array_key_exists($pubkey, $accounts)) {
+				$accounts[$pubkey] = array();
+			}
 			$accounts[$pubkey]['lastbackuptime'] = time();
+			$accounts[$pubkey][$plugname] = true;
 			$accounts[$pubkey]['url'] = $info['url'];
 			$accounts[$pubkey]['email'] = $info['email'];
-			$this->update($accounts);
+			self::update($this->settings, $accounts);
 		}
 
-		public function remove($pubkey) {
-			$bvkeys = $this->settings->getOption('bvkeys');
-			$accounts = self::allAccounts($this->settings);
-			$this->rmkeys($pubkey);
-			$this->setup();
-			if ($accounts && is_array($accounts)) {
+		public static function remove($settings, $pubkey) {
+			$accounts = self::allAccounts($settings);
+			if (array_key_exists($pubkey, $accounts)) {
 				unset($accounts[$pubkey]);
-				$this->update($accounts);
+				self::update($settings, $accounts);
 				return true;
 			}
 			return false;
 		}
 
-		public function doesAccountExists($pubkey) {
-			$accounts = self::allAccounts($this->settings);
+		public static function exists($settings, $pubkey) {
+			$accounts = self::allAccounts($settings);
 			return array_key_exists($pubkey, $accounts);
-		}
-
-		public function update($accounts) {
-			$this->settings->updateOption('bvAccounts', $accounts);
 		}
 	}
 endif;

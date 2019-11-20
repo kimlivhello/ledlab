@@ -5,14 +5,12 @@ if (!class_exists('WPEWPAdmin')) :
 class WPEWPAdmin {
 	public $settings;
 	public $siteinfo;
-	public $account;
 	public $bvinfo;
 
 	function __construct($settings, $siteinfo) {
 		$this->settings = $settings;
 		$this->siteinfo = $siteinfo;
 		$this->bvinfo = new WPEInfo($this->settings);
-		$this->account = WPEAccount::find($this->settings);
 	}
 
 	public function mainUrl($_params = '') {
@@ -34,7 +32,7 @@ class WPEWPAdmin {
 				(array_key_exists('page', $_REQUEST) &&
 				$_REQUEST['page'] == $this->bvinfo->plugname)) {
 			$keys = str_split($_REQUEST['blogvaultkey'], 32);
-			$this->account->updateKeys($keys[0], $keys[1]);
+			WPEAccount::addAccount($this->settings, $keys[0], $keys[1]);
 			if (array_key_exists('redirect', $_REQUEST)) {
 				$location = $_REQUEST['redirect'];
 				wp_redirect($this->bvinfo->appUrl().'/migration/'.$location);
@@ -119,8 +117,10 @@ class WPEWPAdmin {
 	}
 
 	public function siteInfoTags() {
+		require_once dirname( __FILE__ ) . '/recover.php';
 		$bvnonce = wp_create_nonce("bvnonce");
-		$secret = $this->account->secret;
+		$secret = WPERecover::defaultSecret($this->settings);
+		$public = WPEAccount::getApiPublicKey($this->settings);
 		$tags = "<input type='hidden' name='url' value='".$this->siteinfo->wpurl()."'/>\n".
 				"<input type='hidden' name='homeurl' value='".$this->siteinfo->homeurl()."'/>\n".
 				"<input type='hidden' name='siteurl' value='".$this->siteinfo->siteurl()."'/>\n".
@@ -131,6 +131,7 @@ class WPEWPAdmin {
 	 			"<input type='hidden' name='serverip' value='".$_SERVER["SERVER_ADDR"]."'/>\n".
 				"<input type='hidden' name='abspath' value='".ABSPATH."'/>\n".
 				"<input type='hidden' name='secret' value='".$secret."'/>\n".
+				"<input type='hidden' name='public' value='".$public."'/>\n".
 				"<input type='hidden' name='bvnonce' value='".$bvnonce."'/>\n";
 		return $tags;
 	}
@@ -140,8 +141,8 @@ class WPEWPAdmin {
 		if (!WPEAccount::isConfigured($this->settings) && $hook_suffix == 'index.php' ) {
 ?>
 			<div id="message" class="updated" style="padding: 8px; font-size: 16px; background-color: #dff0d8">
-						<a class="button-primary" href="<?php echo $this->mainUrl(); ?>">Activate Migrate Guru</a>
-						&nbsp;&nbsp;&nbsp;<b>Almost Done:</b> Activate your Migrate Guru account to migrate your site.
+						<a class="button-primary" href="<?php echo $this->mainUrl(); ?>">Activate WP Engine Migrate</a>
+						&nbsp;&nbsp;&nbsp;<b>Almost Done:</b> Activate your WP Engine account to migrate your site.
 			</div>
 <?php
 		}
@@ -153,6 +154,11 @@ class WPEWPAdmin {
 
 	public function initBranding($plugins) {
 		$slug = $this->bvinfo->slug;
+
+		if (!is_array($plugins) || !isset($slug, $plugins)) {
+			return $plugins;
+		}
+
 		$brand = $this->bvinfo->getBrandInfo();
 		if ($brand) {
 			if (array_key_exists('hide', $brand)) {

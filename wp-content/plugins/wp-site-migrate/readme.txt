@@ -2,8 +2,8 @@
 Contributors: wpengine, blogvault, akshatc, taylor4484
 Tags: wpe, wpengine, migration
 Requires at least: 4.0
-Tested up to: 5.2.1
-Stable tag: 2.1
+Tested up to: 5.3
+Stable tag: 3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,16 @@ That's easy! [Signup here](http://wpengine.com/plans/).
 2. BlogVault dashboard showing live updates.
 
 == Changelog ==
+= 3.4 =
+* Plugin branding fixes
+
+= 3.2 =
+* Updating account authentication struture
+
+= 2.3 =
+* Adding params validation
+* Adding support for custom user tables
+
 = 2.1 =
 * Restructuring classes
 

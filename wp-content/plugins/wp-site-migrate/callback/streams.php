@@ -8,10 +8,10 @@ if (!class_exists('BVRespStream')) :
 		public $bvb64cksize;
 		public $checksum;
 		
-		function __construct($params) {
-			$this->bvb64stream = isset($params['bvb64stream']);
-			$this->bvb64cksize = array_key_exists('bvb64cksize', $params) ? intval($params['bvb64cksize']) : false;
-			$this->checksum = array_key_exists('checksum', $params) ? $params['checksum'] : false;
+		function __construct($request) {
+			$this->bvb64stream = $request->bvb64stream;
+			$this->bvb64cksize = $request->bvb64cksize;
+			$this->checksum = $request->checksum;
 		}
 
 		public function writeChunk($chunk) {
@@ -20,9 +20,9 @@ if (!class_exists('BVRespStream')) :
 		public static function startStream($account, $request) {
 			$result = array();
 			$params = $request->params;
-			$stream = new BVRespStream($params);
+			$stream = new BVRespStream($request);
 			if ($request->isAPICall()) {
-				$stream = new BVHttpStream($params);
+				$stream = new BVHttpStream($request);
 				if (!$stream->connect()) {
 					$apicallstatus = array(
 						"httperror" => "Cannot Open Connection to Host",
@@ -65,8 +65,8 @@ if (!class_exists('BVRespStream')) :
 	}
 
 class BVRespStream extends BVStream {
-	function __construct($params) {
-		parent::__construct($params);
+	function __construct($request) {
+		parent::__construct($request);
 	}
 
 	public function writeChunk($_string) {
@@ -91,11 +91,11 @@ class BVHttpStream extends BVStream {
 	var $boundary;
 	var $apissl;
 
-	function __construct($params) {
-		parent::__construct($params);
-		$this->host = $params['apihost'];
-		$this->port = intval($params['apiport']);
-		$this->apissl = array_key_exists('apissl', $params);
+	function __construct($request) {
+		parent::__construct($request);
+		$this->host = $request->params['apihost'];
+		$this->port = intval($request->params['apiport']);
+		$this->apissl = array_key_exists('apissl', $request->params);
 	}
 
 	public function connect() {

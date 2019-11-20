@@ -16,7 +16,6 @@ if (!class_exists('WPEWPAction')) :
 		}
 	
 		public function activate() {
-			$account = WPEAccount::find($this->settings);
 			if (!isset($_REQUEST['blogvaultkey'])) {
 				##BVKEYSLOCATE##
 			}
@@ -26,7 +25,7 @@ if (!class_exists('WPEWPAction')) :
 				$this->siteinfo->basic($info);
 				$this->bvapi->pingbv('/bvapi/activate', $info);
 			} else {
-				$account->setup();
+				WPEAccount::setup($this->settings);
 			}
 		}
 

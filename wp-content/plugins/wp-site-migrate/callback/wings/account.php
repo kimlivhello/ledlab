@@ -14,27 +14,38 @@ class BVAccountCallback extends BVCallbackBase {
 	function process($request) {
 		$params = $request->params;
 		$account = $this->account;
+		$settings = $this->settings;
 		switch ($request->method) {
-		case "addkeys":
-			$resp = array("status" => $account->addKeys($params['public'], $params['secret']));
+		case "addacc":
+			WPEAccount::addAccount($this->settings, $params['public'], $params['secret']);
+			$resp = array("status" => WPEAccount::exists($this->settings, $params['public']));
 			break;
-		case "updatekeys":
-			$resp = array("status" => $account->updateKeys($params['public'], $params['secret']));
-			break;
-		case "rmkeys":
-			$resp = array("status" => $account->rmKeys($params['public']));
+		case "rmacc":
+			$resp = array("status" => $account->remove($params['public']));
 			break;
 		case "updt":
 			$info = array();
 			$info['email'] = $params['email'];
 			$info['url'] = $params['url'];
 			$info['pubkey'] = $params['pubkey'];
-			$account->add($info);
-			$resp = array("status" => $account->doesAccountExists($params['pubkey']));
+			$account->updateInfo($info);
+			$resp = array("status" => WPEAccount::exists($this->settings, $params['pubkey']));
 			break;
-		case "disc":
-			$account->remove($params['pubkey']);
-			$resp = array("status" => !$account->doesAccountExists($params['pubkey']));
+		case "updtapikey":
+			$resp = array("status" => WPEAccount::updateApiPublicKey($this->settings, $params['pubkey']));
+			break;
+		case "rmdefsec":
+			$resp = array("status" => $settings->deleteOption('bvDefaultSecret'));
+			break;
+		case "rmbvkeys":
+			$resp = array("status" => $settings->deleteOption('bvKeys'));
+			break;
+		case "rmdefpub":
+			$resp = array("status" => $settings->deleteOption('bvDefaultPublic'));
+			break;
+		case "rmoldbvacc":
+			$resp = array("status" => $settings->deleteOption('bvAccounts'));
+			break;
 		case "fetch":
 			$resp = array("status" => WPEAccount::allAccounts($this->settings));
 			break;

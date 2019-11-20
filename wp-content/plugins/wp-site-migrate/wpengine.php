@@ -5,7 +5,7 @@ Plugin URI: https://wpengine.com
 Description: The easiest way to migrate your site to WP Engine
 Author: WPEngine
 Author URI: https://wpengine.com
-Version: 2.1
+Version: 3.4
 Network: True
  */
 
@@ -52,6 +52,7 @@ register_deactivation_hook(__FILE__, array($wp_action, 'deactivate'));
 
 add_action('wp_footer', array($wp_action, 'footerHandler'), 100);
 
+##WPCLIMODULE##
 if (is_admin()) {
 	require_once dirname( __FILE__ ) . '/wp_admin.php';
 	$wpadmin = new WPEWPAdmin($bvsettings, $bvsiteinfo);
@@ -75,19 +76,35 @@ if ((array_key_exists('bvreqmerge', $_POST)) || (array_key_exists('bvreqmerge', 
 
 if ((array_key_exists('bvplugname', $_REQUEST)) && ($_REQUEST['bvplugname'] == "wpengine")) {
 	require_once dirname( __FILE__ ) . '/callback/base.php';
-	require_once dirname( __FILE__ ) . '/callback/request.php';
 	require_once dirname( __FILE__ ) . '/callback/response.php';
-	
-	$request = new BVCallbackRequest($_REQUEST);
-	$account = WPEAccount::find($bvsettings, $_REQUEST['pubkey']);
+	require_once dirname( __FILE__ ) . '/callback/request.php';
+	require_once dirname( __FILE__ ) . '/recover.php';
 
-	
-	##RECOVERYMODULE##
+	$pubkey = $_REQUEST['pubkey'];
 
-	if ($account && (1 === $account->authenticate())) {
+	if (array_key_exists('rcvracc', $_REQUEST)) {
+		$account = WPERecover::find($bvsettings, $pubkey);
+	} else {
+		$account = WPEAccount::find($bvsettings, $pubkey);
+	}
+
+	$request = new BVCallbackRequest($account, $_REQUEST);
+	$response = new BVCallbackResponse($request->bvb64cksize);
+
+	if ($account && (1 === $account->authenticate($request))) {
 		require_once dirname( __FILE__ ) . '/callback/handler.php';
-		$request->params = $request->processParams();
-		$callback_handler = new BVCallbackHandler($bvdb, $bvsettings, $bvsiteinfo, $request, $account);
+		$params = $request->processParams($_REQUEST);
+		if ($params === false) {
+			$resp = array(
+				"account_info" => $account->respInfo(),
+				"request_info" => $request->respInfo(),
+				"bvinfo" => $bvinfo->respInfo(),
+				"statusmsg" => "BVPRMS_CORRUPTED"
+			);
+			$response->terminate($resp);
+		}
+		$request->params = $params;
+		$callback_handler = new BVCallbackHandler($bvdb, $bvsettings, $bvsiteinfo, $request, $account, $response);
 		if ($request->is_afterload) {
 			add_action('wp_loaded', array($callback_handler, 'execute'));
 		} else if ($request->is_admin_ajax) {
@@ -101,10 +118,11 @@ if ((array_key_exists('bvplugname', $_REQUEST)) && ($_REQUEST['bvplugname'] == "
 			"account_info" => $account ? $account->respInfo() : array("error" => "ACCOUNT_NOT_FOUND"),
 			"request_info" => $request->respInfo(),
 			"bvinfo" => $bvinfo->respInfo(),
-		  "statusmsg" => "FAILED_AUTH"
+			"statusmsg" => "FAILED_AUTH",
+			"api_pubkey" => substr(WPEAccount::getApiPublicKey($bvsettings), 0, 8),
+			"def_sigmatch" => substr(WPEAccount::getSigMatch($request, WPERecover::getDefaultSecret($bvsettings)), 0, 8)
 		);
-		$response = new BVCallbackResponse();
-		$response->terminate($resp, $request->params);
+		$response->terminate($resp);
 	}
 } else {
 	##PROTECTMODULE##

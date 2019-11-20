@@ -11,13 +11,13 @@ if (!class_exists('BVCallbackHandler')) :
 		public $account;
 		public $response;
 
-		public function __construct($db, $settings, $siteinfo, $request, $account) {
+		public function __construct($db, $settings, $siteinfo, $request, $account, $response) {
 			$this->db = $db;
 			$this->settings = $settings;
 			$this->siteinfo = $siteinfo;
 			$this->request = $request;
 			$this->account = $account;
-			$this->response = new BVCallbackResponse();
+			$this->response = $response;
 		}
 
 		public function bvAdmExecuteWithoutUser() {
@@ -35,9 +35,10 @@ if (!class_exists('BVCallbackHandler')) :
 				"request_info" => $this->request->respInfo(),
 				"site_info" => $this->siteinfo->respInfo(),
 				"account_info" => $this->account->respInfo(),
-				"bvinfo" => $bvinfo->respInfo()
+				"bvinfo" => $bvinfo->respInfo(),
+				"api_pubkey" => substr(WPEAccount::getApiPublicKey($this->settings), 0, 8)
 			);
-			$this->response->terminate($resp, $this->request->params);
+			$this->response->terminate($resp);
 		}
 	
 		public function routeRequest() {

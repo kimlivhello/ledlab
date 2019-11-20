@@ -5,9 +5,11 @@ if (!class_exists('BVCallbackResponse')) :
 
 	class BVCallbackResponse extends BVCallbackBase {
 		public $status;
+		public $bvb64cksize;
 
-		public function __construct() {
+		public function __construct($bvb64cksize) {
 			$this->status = array("blogvault" => "response");
+			$this->bvb64cksize = $bvb64cksize;
 		}
 
 		public function addStatus($key, $value) {
@@ -21,14 +23,11 @@ if (!class_exists('BVCallbackResponse')) :
 			$this->status[$key][] = $value;
 		}
 
-		public function terminate($resp = array(), $req_params) {
+		public function terminate($resp = array()) {
 			$resp = array_merge($this->status, $resp);
 			$resp["signature"] = "Blogvault API";
 			$response = "bvbvbvbvbv".serialize($resp)."bvbvbvbvbv";
-			if (array_key_exists('bvb64resp', $req_params)) {
-				$chunk_size = array_key_exists('bvb64cksize', $req_params) ? intval($req_params['bvb64cksize']) : false;
-				$response = "bvb64bvb64".$this->base64Encode($response, $chunk_size)."bvb64bvb64";
-			}
+			$response = "bvb64bvb64".$this->base64Encode($response, $this->bvb64cksize)."bvb64bvb64";
 			die($response);
 
 			exit;

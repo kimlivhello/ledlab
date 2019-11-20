@@ -38,7 +38,7 @@ class WPEWPSiteInfo {
 			return true;
 		return is_main_site();
 	}
-	
+
 	public function respInfo() {
 		$info = array();
 		$this->basic($info);
